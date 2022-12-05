@@ -1,10 +1,7 @@
 #![feature(allocator_api)]
 #![feature(ptr_as_uninit)]
 
-use std::{alloc::{Layout, Allocator}, time::Instant};
-
-use nix::{fcntl::OFlag, sys::stat::Mode};
-use rand::{Rng, distributions::Uniform};
+use rand::{distributions::Uniform, Rng};
 
 fn main() {
     let mut rng = rand::thread_rng();
