@@ -2,7 +2,10 @@
 #![feature(ptr_as_uninit)]
 
 use nix::{fcntl::OFlag, sys::stat::Mode};
-use std::{alloc::{Allocator, Layout}, io::Read};
+use std::{
+    alloc::{Allocator, Layout},
+    io::Read,
+};
 
 use criterion::{criterion_group, criterion_main, Criterion};
 
