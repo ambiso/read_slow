@@ -2,7 +2,7 @@
 #![feature(ptr_as_uninit)]
 
 use nix::{fcntl::OFlag, sys::stat::Mode};
-use std::alloc::{Allocator, Layout};
+use std::{alloc::{Allocator, Layout}, io::Read};
 
 use criterion::{criterion_group, criterion_main, Criterion};
 
@@ -21,6 +21,16 @@ fn criterion_benchmark(c: &mut Criterion) {
             let x = nix::unistd::read(fd, v1).unwrap();
             assert_eq!(x, n); // I know this can fail
             unsafe { Vec::from_raw_parts(v.cast::<u8>().as_ptr(), n, n) }
+        })
+    });
+    c.bench_function("safe hack", |b| {
+        b.iter(|| {
+            let mut f = std::fs::File::open(path).unwrap();
+            let n = f.metadata().unwrap().len() as usize;
+            let mut v3 = vec![0u8; n];
+            let x = f.read(&mut v3).unwrap();
+            assert_eq!(x, n);
+            v3
         })
     });
 }
