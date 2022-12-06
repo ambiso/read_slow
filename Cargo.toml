@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-nix = "0.26.1"
 rand = "0.8.5"
 
 [dev-dependencies]
@@ -15,3 +14,8 @@ criterion = "0.3"
 [[bench]]
 name = "my_benchmark"
 harness = false
+
+[profile.bench]
+debug = true
+[profile.release]
+debug = true
