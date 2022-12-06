@@ -1,5 +1,6 @@
 #![feature(allocator_api)]
 #![feature(ptr_as_uninit)]
+#![feature(slice_ptr_get)]
 
 use nix::{fcntl::OFlag, sys::stat::Mode};
 use std::{
@@ -23,6 +24,15 @@ fn criterion_benchmark(c: &mut Criterion) {
             let v1 = unsafe { std::mem::transmute::<_, &mut [u8]>(v.as_uninit_slice_mut()) };
             let x = nix::unistd::read(fd, v1).unwrap();
             assert_eq!(x, n); // I know this can fail
+
+            // Mimic probe read done by read_to_end
+            let mut probe_buf = [0u8; 32];
+            let x2 = nix::unistd::read(fd, &mut probe_buf).unwrap();
+            assert_eq!(x2, 0);
+
+            // Clean up
+            nix::unistd::close(fd).unwrap();
+            // unsafe { a.deallocate(v.as_non_null_ptr(), layout);}
             unsafe { Vec::from_raw_parts(v.cast::<u8>().as_ptr(), n, n) }
         })
     });
